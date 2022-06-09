@@ -18,20 +18,20 @@ class TaskModel {
 
   toJason() {
     return {
-      name: taskName,
-      desc: description,
+      conname: taskName,
+      condesc: description,
       condate: date,
-      categ: category,
+      concateg: category,
       'id': id,
       contime: time
     };
   }
 
   TaskModel.fromJason(Map<String, dynamic> map) {
-    taskName = map[name];
-    description = map[desc];
+    taskName = map[conname];
+    description = map[condesc];
     date = map[condate];
-    category = map[categ];
+    category = map[concateg];
     id = map['id'];
     time = map[contime];
   }

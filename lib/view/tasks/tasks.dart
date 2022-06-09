@@ -1,25 +1,22 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
-import 'package:to_do_app/model/database/local_data_base.dart';
-import 'package:to_do_app/model/database/tasks_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:to_do_app/controller/bloc/tasks_cubit.dart';
+import 'package:to_do_app/controller/bloc/tasks_states.dart';
 
-class Tasks extends StatefulWidget {
+import 'package:to_do_app/model/constants/constants.dart';
+
+class Tasks extends StatelessWidget {
   const Tasks({Key? key}) : super(key: key);
 
   @override
-  State<Tasks> createState() => _TasksState();
-}
-
-class _TasksState extends State<Tasks> {
-  List<TaskModel> tasks = [];
-  @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, size) {
-      return FutureBuilder(
-        future: getData(),
-        builder: (context, data) {
-          return !data.hasData || data.hasError || tasks.isEmpty
+    return BlocConsumer<TasksCubit, TasksStates>(
+      listener: (BuildContext context, state) {},
+      builder: (BuildContext context, state) => LayoutBuilder(
+        builder: (ctx, size) {
+          final cubit = TasksCubit.get(ctx);
+
+          return cubit.tasks.isEmpty
               ? SizedBox(
                   //height: size.maxHeight,
                   width: size.maxWidth,
@@ -32,27 +29,67 @@ class _TasksState extends State<Tasks> {
                     ),
                   ),
                 )
-              : ListView.builder(
+              : ListView.separated(
                   itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        Text(tasks[index].taskName!),
-                        Text(tasks[index].description!),
-                        Text(tasks[index].date!),
-                        Text(tasks[index].category!),
-                      ],
+                    return Padding(
+                      padding: EdgeInsetsDirectional.only(
+                        start: size.maxWidth * .02,
+                        bottom: size.maxWidth * .02,
+                        top: size.maxWidth * .02,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Column(
+                            children: [
+                              Text(
+                                cubit.tasks[index][contime],
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                cubit.tasks[index][condate],
+                                style: const TextStyle(
+                                  color: primaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(width: size.maxWidth * .04),
+                          Column(
+                            children: [
+                              Text(
+                                cubit.tasks[index][conname],
+                                style: TextStyle(
+                                    fontSize: size.maxWidth * 0.1,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                cubit.tasks[index][condesc],
+                                style: TextStyle(
+                                    fontSize: size.maxWidth * 0.05,
+                                    color: primaryColor),
+                              ),
+                            ],
+                          ),
+                          Text(cubit.tasks[index][concateg]),
+                        ],
+                      ),
                     );
                   },
-                  itemCount: tasks.length,
+                  separatorBuilder: (ctx, number) {
+                    return Container(
+                      width: double.infinity,
+                      height: 1,
+                      color: primaryColor,
+                    );
+                  },
+                  itemCount: cubit.tasks.length,
                 );
         },
-      );
-    });
-  }
-
-  Future<List<TaskModel>> getData() async {
-    var dataBase = LocalDataBase.db;
-    await dataBase.getUserData().then((value) => tasks = value);
-    return tasks;
+      ),
+    );
   }
 }

@@ -27,7 +27,7 @@ class LocalDataBase {
       onCreate: (db, version) async {
         // When creating the db, create the table
         await db.execute(
-            'CREATE TABLE $tableName(id INTEGER PRIMARY KEY, $name TEXT, $desc TEXT, $categ TEXT , $condate TEXT , $contime TEXT)');
+            'CREATE TABLE $tableName(id INTEGER PRIMARY KEY, $conname TEXT, $condesc TEXT, $concateg TEXT , $condate TEXT , $contime TEXT)');
       },
     );
   }
@@ -54,17 +54,12 @@ class LocalDataBase {
   //   return _db!.rawUpdate(sql);
   // }
 
-  Future<List<TaskModel>> getUserData() async {
+  Future<List<Map<String, dynamic>>> getUserData() async {
     var _db = await dataBase;
     try {
       List<Map<String, dynamic>> userMap = await _db!.query(tableName);
 
-      List<TaskModel> userData = [];
-      userMap.isNotEmpty
-          ? userData = userMap.map((e) => TaskModel.fromJason(e)).toList()
-          : [];
-
-      return userData;
+      return userMap;
     } catch (e) {
       throw (e);
     }
