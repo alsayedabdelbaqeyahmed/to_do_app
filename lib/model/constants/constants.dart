@@ -8,5 +8,7 @@ const String condesc = 'description';
 const String condate = 'date';
 const String concateg = 'category';
 const String contime = 'time';
-
-
+const String constatus = 'status';
+const String condone = 'done';
+const String connew = 'new';
+const String conarchived = 'archived';

@@ -15,6 +15,7 @@ class Tasks extends StatelessWidget {
       builder: (BuildContext context, state) => LayoutBuilder(
         builder: (ctx, size) {
           final cubit = TasksCubit.get(ctx);
+          //print(cubit.tasks);
 
           return cubit.tasks.isEmpty
               ? SizedBox(
@@ -31,51 +32,74 @@ class Tasks extends StatelessWidget {
                 )
               : ListView.separated(
                   itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsetsDirectional.only(
-                        start: size.maxWidth * .02,
-                        bottom: size.maxWidth * .02,
-                        top: size.maxWidth * .02,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Column(
-                            children: [
-                              Text(
-                                cubit.tasks[index][contime],
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
+                    return Dismissible(
+                      key: UniqueKey(),
+                      onDismissed: (diss) {
+                        cubit.deletetask(cubit.tasks[index]['id'], context);
+                      },
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.only(
+                          start: size.maxWidth * .02,
+                          bottom: size.maxWidth * .02,
+                          top: size.maxWidth * .02,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Column(
+                              children: [
+                                Text(
+                                  cubit.tasks[index][contime],
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                cubit.tasks[index][condate],
-                                style: const TextStyle(
-                                  color: primaryColor,
+                                Text(
+                                  cubit.tasks[index][condate],
+                                  style: const TextStyle(
+                                    color: primaryColor,
+                                  ),
                                 ),
+                              ],
+                            ),
+                            SizedBox(width: size.maxWidth * .04),
+                            Column(
+                              children: [
+                                Text(
+                                  cubit.tasks[index][conname],
+                                  style: TextStyle(
+                                      fontSize: size.maxWidth * 0.1,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  cubit.tasks[index][condesc],
+                                  style: TextStyle(
+                                      fontSize: size.maxWidth * 0.05,
+                                      color: primaryColor),
+                                ),
+                              ],
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                cubit.updateTaskStatus(
+                                    condone, cubit.tasks[index]['id'], context);
+                              },
+                              icon: const Icon(
+                                Icons.done_rounded,
                               ),
-                            ],
-                          ),
-                          SizedBox(width: size.maxWidth * .04),
-                          Column(
-                            children: [
-                              Text(
-                                cubit.tasks[index][conname],
-                                style: TextStyle(
-                                    fontSize: size.maxWidth * 0.1,
-                                    fontWeight: FontWeight.bold),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                cubit.updateTaskStatus(conarchived,
+                                    cubit.tasks[index]['id'], context);
+                              },
+                              icon: const Icon(
+                                Icons.archive_rounded,
                               ),
-                              Text(
-                                cubit.tasks[index][condesc],
-                                style: TextStyle(
-                                    fontSize: size.maxWidth * 0.05,
-                                    color: primaryColor),
-                              ),
-                            ],
-                          ),
-                          Text(cubit.tasks[index][concateg]),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },

@@ -5,6 +5,7 @@ class TaskModel {
   String? description;
   String? date, time;
   String? category;
+  String? status;
   int? id;
 
   TaskModel({
@@ -14,6 +15,7 @@ class TaskModel {
     this.taskName,
     this.id,
     this.time,
+    this.status,
   });
 
   toJason() {
@@ -23,7 +25,8 @@ class TaskModel {
       condate: date,
       concateg: category,
       'id': id,
-      contime: time
+      contime: time,
+      constatus: status
     };
   }
 
@@ -34,5 +37,6 @@ class TaskModel {
     category = map[concateg];
     id = map['id'];
     time = map[contime];
+    status = map[constatus];
   }
 }

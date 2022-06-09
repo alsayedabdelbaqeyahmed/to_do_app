@@ -188,12 +188,12 @@ class AddNewTaskForm extends StatelessWidget {
                         _key.currentState!.save();
                         cubit.addTasks(
                           TaskModel(
-                            category: categoryValue,
-                            taskName: taskName,
-                            date: taskDate,
-                            description: taskDescription,
-                            time: taskTime,
-                          ),
+                              category: categoryValue,
+                              taskName: taskName,
+                              date: taskDate,
+                              description: taskDescription,
+                              time: taskTime,
+                              status: connew),
                           context,
                         );
                       }

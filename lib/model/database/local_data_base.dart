@@ -27,7 +27,7 @@ class LocalDataBase {
       onCreate: (db, version) async {
         // When creating the db, create the table
         await db.execute(
-            'CREATE TABLE $tableName(id INTEGER PRIMARY KEY, $conname TEXT, $condesc TEXT, $concateg TEXT , $condate TEXT , $contime TEXT)');
+            'CREATE TABLE $tableName(id INTEGER PRIMARY KEY, $conname TEXT, $condesc TEXT, $concateg TEXT , $condate TEXT , $contime TEXT , $constatus TEXT)');
       },
     );
   }
@@ -49,10 +49,15 @@ class LocalDataBase {
         where: 'id = ?', whereArgs: [user.id]);
   }
 
-  // Future<int> updateele(UserDataModel user) async {
-  //   var _db = await dataBase;
-  //   return _db!.rawUpdate(sql);
-  // }
+  Future<int> updateStatus(String? status, int? id) async {
+    try {
+      var _db = await dataBase;
+      return await _db!.rawUpdate(
+          'UPDATE $tableName SET $constatus = ? WHERE id = ?', ['$status', id]);
+    } catch (e) {
+      throw (e.toString());
+    }
+  }
 
   Future<List<Map<String, dynamic>>> getUserData() async {
     var _db = await dataBase;
@@ -61,7 +66,8 @@ class LocalDataBase {
 
       return userMap;
     } catch (e) {
-      throw (e);
+      print(e.toString());
+      throw (e.toString());
     }
   }
 
@@ -70,8 +76,18 @@ class LocalDataBase {
     try {
       return _db!.delete(tableName);
     } catch (e) {
+      print(e.toString());
+      throw (e.toString());
+    }
+  }
+
+  Future<int> deleteTask(int? id) async {
+    var _db = await dataBase;
+    try {
+      return _db!.rawDelete('DELETE FROM $tableName WHERE id = ?', [id]);
+    } catch (e) {
       print(e);
-      throw (e);
+      throw (e.toString());
     }
   }
 }
