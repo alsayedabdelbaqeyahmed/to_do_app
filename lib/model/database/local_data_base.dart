@@ -43,10 +43,14 @@ class LocalDataBase {
     }
   }
 
-  Future<int> updateData(TaskModel user) async {
-    var _db = await dataBase;
-    return _db!.update(tableName, user.toJason(),
-        where: 'id = ?', whereArgs: [user.id]);
+  Future<int> updateData(TaskModel task, int id) async {
+    try {
+      var _db = await dataBase;
+      return await _db!
+          .update(tableName, task.toJason(), where: 'id = ?', whereArgs: [id]);
+    } catch (e) {
+      throw (e.toString());
+    }
   }
 
   Future<int> updateStatus(String? status, int? id) async {

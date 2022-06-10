@@ -4,7 +4,8 @@ import 'package:to_do_app/model/constants/constants.dart';
 import 'package:to_do_app/view/add_new_tasks/add_new_task_form.dart';
 
 class AddNewTasksScreen extends StatelessWidget {
-  const AddNewTasksScreen({Key? key}) : super(key: key);
+  final Map<String, dynamic>? tasks;
+  const AddNewTasksScreen({Key? key, this.tasks}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +57,7 @@ class AddNewTasksScreen extends StatelessWidget {
               Expanded(
                 child: AddNewTaskForm(
                   constr: constrain,
+                  tasks: tasks,
                 ),
               ),
             ],

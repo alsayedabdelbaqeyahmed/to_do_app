@@ -14,8 +14,8 @@ import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
 class AddNewTaskForm extends StatelessWidget {
-  AddNewTaskForm({Key? key, this.constr}) : super(key: key);
-
+  AddNewTaskForm({Key? key, this.constr, this.tasks}) : super(key: key);
+  final Map<String, dynamic>? tasks;
   final BoxConstraints? constr;
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   final focus = FocusNode();
@@ -55,6 +55,8 @@ class AddNewTaskForm extends StatelessWidget {
                       children: [
                         // add tak name................................................
                         TextFormField(
+                          initialValue:
+                              tasks!.isNotEmpty ? tasks![conname] : '',
                           textInputAction: TextInputAction.done,
                           decoration: const InputDecoration(
                             label: Text('Task Name'),
@@ -80,6 +82,8 @@ class AddNewTaskForm extends StatelessWidget {
 
                         // Add task description ...........................................
                         TextFormField(
+                          initialValue:
+                              tasks!.isNotEmpty ? tasks![condesc] : '',
                           textInputAction: TextInputAction.done,
                           focusNode: focus,
                           maxLines: null,
@@ -115,13 +119,15 @@ class AddNewTaskForm extends StatelessWidget {
                                   firstDate: DateTime(1994),
                                   lastDate: DateTime(2100),
                                 );
-                                date != null
-                                    ? taskDate = formatter.format(date)
-                                    : taskDate =
-                                        formatter.format(DateTime.now());
+                                if (date != null) {
+                                  taskDate = formatter.format(date);
+                                } else {
+                                  taskDate = formatter.format(DateTime.now());
+                                }
+                                taskDate = formatter.format(date!);
                               },
                               child: Text(
-                                taskDate!,
+                                tasks!.isEmpty ? taskDate! : tasks![condate],
                                 style: const TextStyle(color: primaryColor),
                               ),
                             ),
@@ -132,11 +138,14 @@ class AddNewTaskForm extends StatelessWidget {
                                 final date = await showTimePicker(
                                     context: context,
                                     initialTime: TimeOfDay.now());
-                                date != null
-                                    ? taskTime = date.format(context)
-                                    : taskTime = TimeOfDay.now()
-                                        .format(context)
-                                        .toString();
+
+                                if (date != null) {
+                                  taskTime = date.format(context);
+                                } else {
+                                  taskTime = TimeOfDay.now()
+                                      .format(context)
+                                      .toString();
+                                }
                               },
                               child: Text(
                                 taskTime!.trim().isEmpty || taskTime == null
@@ -146,17 +155,20 @@ class AddNewTaskForm extends StatelessWidget {
                               ),
                             ),
                             //select category...........................................
-                            SelectCategory(
-                              value: categoryValue,
-                              onChanged: (value) {
-                                categoryValue = value;
-                              },
-                            ),
+                            tasks!.isEmpty
+                                ? SelectCategory(
+                                    value: categoryValue,
+                                    onChanged: (value) {
+                                      categoryValue = value;
+                                    },
+                                  )
+                                : const SizedBox.shrink(),
                           ],
                         ),
                         SizedBox(height: constr!.maxHeight * 0.05),
-                        categoryValue!.trim() == 'Other'
+                        categoryValue!.trim() == 'Other' || tasks!.isNotEmpty
                             ? TextFormField(
+                                initialValue: tasks![concateg],
                                 textInputAction: TextInputAction.next,
                                 decoration: const InputDecoration(
                                   label: Text('Task Category'),
@@ -182,20 +194,35 @@ class AddNewTaskForm extends StatelessWidget {
 
                   //add tasks buttons...............................................
                   DefaultButton(
-                    text: 'Add',
+                    text: tasks!.isNotEmpty ? 'Update' : 'Add',
                     press: () async {
                       if (_key.currentState!.validate()) {
                         _key.currentState!.save();
-                        cubit.addTasks(
-                          TaskModel(
-                              category: categoryValue,
-                              taskName: taskName,
-                              date: taskDate,
-                              description: taskDescription,
-                              time: taskTime,
-                              status: connew),
-                          context,
-                        );
+                        tasks!.isNotEmpty
+                            ? cubit.updateAllTask(
+                                tasks: TaskModel(
+                                  category: categoryValue,
+                                  taskName: taskName,
+                                  date: taskDate,
+                                  description: taskDescription,
+                                  time: taskTime,
+                                  status: connew,
+                                ),
+                                context: context,
+                                id: tasks!['id'],
+                              )
+                            : cubit.addTasks(
+                                TaskModel(
+                                  category: categoryValue,
+                                  taskName: taskName,
+                                  date: taskDate,
+                                  description: taskDescription,
+                                  time: taskTime,
+                                  status: connew,
+                                ),
+                                context,
+                              );
+                        Navigator.of(context).pop();
                       }
                     },
                     buttoncolors: primaryColor,

@@ -88,6 +88,11 @@ class MyHomePage extends StatelessWidget {
                           context,
                         );
                         Navigator.pop(context);
+                        titleController.clear();
+                        descController.clear();
+                        dateController.clear();
+                        timeController.clear();
+                        cateController.clear();
                         cubit.isDonestate(true);
                       }
                     } else {
@@ -101,6 +106,11 @@ class MyHomePage extends StatelessWidget {
                           .closed
                           .then((value) {
                             cubit.isDonestate(false);
+                            titleController.clear();
+                            descController.clear();
+                            dateController.clear();
+                            timeController.clear();
+                            cateController.clear();
                           });
                     }
                   },
